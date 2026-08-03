@@ -1,13 +1,21 @@
 #!/bin/bash
 
-echo "Installing required packages in Termux..."
-pkg update && pkg install python git -y
+echo "Repairing Termux package directory structure..."
+# Re-create missing apt archive cache folders if Android cleared them
+mkdir -p /data/data/com.termux/cache/apt/archives/partial
+
+echo "Updating Termux repositories and installing Python..."
+# Fix broken or missing packages gracefully
+pkg update -y --fix-missing || apt-get update --fix-missing
+pkg install python -y || apt-get install python -y
+
+echo "Installing OpenAI python package..."
 pip install openai
 
-# Create shortcut alias 'ai' to run the python app
-echo "alias ai='python ~/app.py'" >> ~/.bashrc
+# Setup shortcut alias 'ai'
+echo "alias ai='python ~/AI-MODEL-INTERFACE-/app.py'" >> ~/.bashrc
 
 echo ""
 echo "Setup complete!"
-echo "Run 'source ~/.bashrc' or restart Termux."
-echo "Then type 'ai' to start — it will prompt you for your own API key on the first run."
+echo "Run: source ~/.bashrc"
+echo "Then type 'ai' to launch."
